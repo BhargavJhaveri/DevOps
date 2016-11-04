@@ -43,7 +43,7 @@ localhost:5000/recent
 Navigate to the project home.
 And execute:
 ```
-curl -F "image=@./img/morning.jpg" localhost:3000/upload
+curl -F "image=@./img/morning.jpg" localhost:5000/upload
 ```
 You can upload any images in the above manner.
 
