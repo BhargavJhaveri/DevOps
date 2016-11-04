@@ -74,3 +74,6 @@ localhost:5000/destroy
 
 Proxy server is running at port 5000 and delegates the request to one of the available servers spawned.
 Current logic for delegation is round robin fashion.
+
+So, the request made to same URL will be handled by different web-servers in round robin fashion.
+This code is written in ``` proxy.js ``` file. Target variable is the chosen web server to handle the request.
