@@ -1,79 +1,74 @@
 Cache, Proxies, Queues
 =========================
 
+Name: Bhargav Jhaveri
+
+Unity ID: bjhaver
+
+
+
 ### Setup
 
 * Clone this repo, run `npm install`.
 * Install redis and run on localhost:6379
+* Open two new terminal tabs and exceute ``` node main.js ``` and ``` node proxy.js```
 
-### A simple web server
 
-Use [express](http://expressjs.com/) to install a simple web server.
+### Set/Get dictionary and An expiring cache
 
-	var server = app.listen(3000, function () {
-	
-	  var host = server.address().address
-	  var port = server.address().port
-	
-	  console.log('Example app listening at http://%s:%s', host, port)
-	})
+Go to the web-page:
 
-Express uses the concept of routes to use pattern matching against requests and sending them to specific functions.  You can simply write back a response body.
-
-	app.get('/', function(req, res) {
-	  res.send('hello world')
-	})
-
-### Redis
-
-You will be using [redis](http://redis.io/) to build some simple infrastructure components, using the [node-redis client](https://github.com/mranney/node_redis).
-
-	var redis = require('redis')
-	var client = redis.createClient(6379, '127.0.0.1', {})
-
-In general, you can run all the redis commands in the following manner: client.CMD(args). For example:
-
-	client.set("key", "value");
-	client.get("key", function(err,value){ console.log(value)});
-
-### An expiring cache
-
-Create two routes, `/get` and `/set`.
-
-When `/set` is visited, set a new key, with the value:
-> "this message will self-destruct in 10 seconds".
-
-Use the expire command to make sure this key will expire in 10 seconds.
-
-When `/get` is visited, fetch that key, and send value back to the client: `res.send(value)` 
+This will be used to set the dictionary.
+```
+localhost:5000/set-dict
+```
+This will be used to get the dictionary value.
+```
+localhost:5000/get-dict
+```
 
 
 ### Recent visited sites
 
-Create a new route, `/recent`, which will display the most recently visited sites.
+Go to the URL: 
 
-There is already a global hook setup, which will allow you to see each site that is requested:
-
-	app.use(function(req, res, next) 
-	{
-	...
-
-Use the lpush, ltrim, and lrange redis commands to store the most recent 5 sites visited, and return that to the client.
+```
+localhost:5000/recent
+```
 
 ### Cat picture uploads: queue
 
-Implement two routes, `/upload`, and `/meow`.
- 
-A stub for upload and meow has already been provided.
+Navigate to the project home.
+And execute:
+```
+curl -F "image=@./img/morning.jpg" localhost:3000/upload
+```
+You can upload any images in the above manner.
 
-Use curl to help you upload easily.
+To visit the uploaded images in the browser visit:
+```
+localhost:5000/meow
+```
 
-	curl -F "image=@./img/morning.jpg" localhost:3000/upload
+### Spawn/Destroy/List
+Spawn:
 
-Have `upload` store the images in a queue.  Have `meow` display the most recent image to the client and *remove* the image from the queue. Note, this is more like a stack.
+```
+localhost:5000/spawn
+```
 
-### Proxy server
+List-Servers:
+```
+localhost:5000/list-servers
+```
 
-Bonus: How might you use redis and express to introduce a proxy server?
+Destroy:
 
-See [rpoplpush](http://redis.io/commands/rpoplpush)
+```
+localhost:5000/destroy
+```
+
+### Proxy Server:
+
+Proxy server is running at port 5000 and delegates the request to one of the available servers spawned.
+Current logic for delegation is round robin fashion.
